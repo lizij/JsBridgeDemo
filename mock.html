@@ -1,0 +1,56 @@
+<html>
+
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <div id="test" align="center">
+            <p>
+                <input type="button" id="no1" value="测试" onclick="test()" />
+            </p>
+        </div>
+    </div>
+</body>
+<script>
+    var msgCount = 0;
+
+    function test() {
+        callNativeMethod('testJsBridge', { data: "msg" + (msgCount++) }, 'callback');
+    }
+
+    function callback(msg) {
+        $("#test").append('<p>' + msg + '</p>');
+    }
+
+    // jsbridge start
+    var jsFrame;
+
+    $(function () {
+        jsFrame = $('<iframe id="jsbridge"></iframe>')[0];
+        jsFrame.style.display = 'none';
+        $('body').append(jsFrame);
+    });
+
+    /**
+     * @param {string} func - Native方法名
+     * @param {dict} params - 参数
+     * @param {string} callbackFunc - 回调函数，结构必须为function(string)
+     */
+    function callNativeMethod(func, params, callbackFunc) {
+        data = {
+            func: func,
+            params: params,
+            callback_func: callbackFunc
+        };
+
+        var url = 'jsbridge:' + btoa(JSON.stringify(data));
+        console.log(url);
+        jsFrame.src = url;
+    }
+    // jsbridge end
+</script>
+
+</html>
